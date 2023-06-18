@@ -48,6 +48,29 @@ const UserPage: NextPage = () => {
         <input name="content" type="text" className="m-1" />
         <button type="submit">Post</button>
       </form>
+      {sessionData && <PostsLists />}
+    </>
+  );
+};
+
+const PostsLists: React.FC = () => {
+  const { data: sessionData } = useSession();
+  const listPostsQuery = api.posts.listPosts.useQuery(sessionData?.user.id);
+
+  if (!listPostsQuery.data) {
+    return <div>WOOPS</div>;
+  }
+
+  return (
+    <>
+      {listPostsQuery.data.map((p) => (
+        <div key={p.id}>
+          <p>id: {p.id}</p>
+          <p>title: {p.title}</p>
+          <p>content: {p.content}</p>
+          <p>published: {p.published}</p>
+        </div>
+      ))}
     </>
   );
 };
