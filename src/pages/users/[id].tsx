@@ -42,7 +42,9 @@ const UserPage: NextPage = () => {
         onSubmit={handleFormSubmit}
         className="flex flex-col border border-black bg-sky-600 p-2"
       >
+        <label>Title</label>
         <input name="title" type="text" className="m-1" />
+        <label>Content</label>
         <input name="content" type="text" className="m-1" />
         <button type="submit">Post</button>
       </form>
