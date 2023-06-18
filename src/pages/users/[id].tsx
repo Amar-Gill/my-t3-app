@@ -2,21 +2,51 @@ import { useRouter } from "next/router";
 import { api } from "~/utils/api";
 import { type NextPage } from "next";
 import Image from "next/image";
+import { useSession } from "next-auth/react";
+import { FormEvent } from "react";
 
 const UserPage: NextPage = () => {
   const { query } = useRouter();
+
   const userQuery = api.users.getById.useQuery(query.id as string);
+  const createPostMutation = api.posts.createPost.useMutation();
+
+  const { data: sessionData } = useSession();
+
+  function handleFormSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    createPostMutation.mutate({
+      title: e.target.title.value,
+      content: e.target.content.value,
+      userId: userQuery.data?.id,
+      published: false,
+    });
+  }
+
+  if (!sessionData) {
+    return <div>Not logged in.</div>;
+  }
 
   return (
-    <div>
-      <h1>User info for: {userQuery.data?.name}</h1>
-      <Image
-        src={userQuery.data?.image}
-        width={240}
-        height={240}
-        alt="profile image"
-      />
-    </div>
+    <>
+      <div>
+        <h1>User info for: {userQuery.data?.name}</h1>
+        <Image
+          src={userQuery.data?.image}
+          width={240}
+          height={240}
+          alt="profile image"
+        />
+      </div>
+      <form
+        onSubmit={handleFormSubmit}
+        className="flex flex-col border border-black bg-sky-600 p-2"
+      >
+        <input name="title" type="text" className="m-1" />
+        <input name="content" type="text" className="m-1" />
+        <button type="submit">Post</button>
+      </form>
+    </>
   );
 };
 
