@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { createTRPCRouter, protectedProcedure } from "~/server/api/trpc";
+import {
+  createTRPCRouter,
+  protectedProcedure,
+  publicProcedure,
+} from "~/server/api/trpc";
 
 export const postRouter = createTRPCRouter({
   createPost: protectedProcedure
@@ -18,6 +22,23 @@ export const postRouter = createTRPCRouter({
           title: input.title,
           content: input.content,
           published: input.published,
+        },
+      });
+    }),
+  listPosts: protectedProcedure.input(z.string()).query(({ ctx, input }) => {
+    return ctx.prisma.post.findMany({
+      where: {
+        authorId: input,
+      },
+    });
+  }),
+  listPublishedPosts: publicProcedure
+    .input(z.string())
+    .query(({ ctx, input }) => {
+      return ctx.prisma.post.findMany({
+        where: {
+          authorId: input,
+          published: true,
         },
       });
     }),
