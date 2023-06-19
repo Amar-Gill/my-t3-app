@@ -8,8 +8,32 @@ import { FormEvent } from "react";
 const UserPage: NextPage = () => {
   const { query } = useRouter();
 
+  const utils = api.useContext();
+
   const userQuery = api.users.getById.useQuery(query.id as string);
-  const createPostMutation = api.posts.createPost.useMutation();
+
+  const createPostMutation = api.posts.createPost.useMutation({
+    async onMutate(newPost) {
+      await utils.posts.listPosts.cancel();
+
+      const params = sessionData?.user.id.toString();
+
+      const prevData = utils.posts.listPosts.getData(params);
+
+      utils.posts.listPosts.setData(params, (old) => [...old, newPost]);
+
+      return { prevData };
+    },
+    onError(err, newPost, ctx) {
+      void utils.posts.listPosts.setData(
+        sessionData?.user.id.toString(),
+        ctx?.prevData
+      );
+    },
+    onSettled() {
+      void utils.posts.listPosts.invalidate();
+    },
+  });
 
   const { data: sessionData } = useSession();
 
