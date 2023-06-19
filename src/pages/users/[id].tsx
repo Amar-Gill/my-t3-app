@@ -68,7 +68,7 @@ const PostsLists: React.FC = () => {
           <p>id: {p.id}</p>
           <p>title: {p.title}</p>
           <p>content: {p.content}</p>
-          <p>published: {p.published}</p>
+          <p>published: {p.published ? "true" : "false"}</p>
         </div>
       ))}
     </>
