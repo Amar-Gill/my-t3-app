@@ -33,6 +33,12 @@ const AppNav: React.FC = () => {
           <Link className="mx-2" href={"/users/" + session?.user.id.toString()}>
             User
           </Link>
+          <Link
+            className="mx-2"
+            href={"/users/" + session?.user.id.toString() + "/posts"}
+          >
+            Posts
+          </Link>
         </li>
       </ul>
     </nav>
