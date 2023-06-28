@@ -1,10 +1,12 @@
 import { NextPage } from "next";
 import { useSession } from "next-auth/react";
+import { useRouter } from "next/router";
 import { FormEvent } from "react";
 import { api } from "~/utils/api";
 
 const PostPage: NextPage = () => {
   const { data: sessionData } = useSession();
+  const { query } = useRouter();
 
   const utils = api.useContext();
 
@@ -35,7 +37,7 @@ const PostPage: NextPage = () => {
     createPostMutation.mutate({
       title: e.target.title.value,
       content: e.target.content.value,
-      userId: userQuery.data?.id,
+      userId: query.id as string,
       published: false,
     });
   }
